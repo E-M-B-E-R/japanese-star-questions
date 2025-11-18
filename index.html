@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N5 Grammar Practice - Star Questions</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Theme Toggle Button -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span> <span id="theme-text">Dark Mode</span>
+    </button>
+    
+    <div class="container">
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen">
+            <div class="header">
+                <h1>🇯🇵 JLPT N5 Grammar Practice</h1>
+                <p class="subtitle">Star (★) Questions</p>
+            </div>
+            
+            <div class="menu-buttons">
+                <button class="btn btn-primary" onclick="startPracticeMode()">
+                    📝 Practice Mode
+                    <span class="btn-subtitle">Interactive quiz with 15 random questions</span>
+                </button>
+                
+                <button class="btn btn-primary" onclick="showTimerSetup()">
+                    ⏱️ Time Challenge
+                    <span class="btn-subtitle">Answer as many questions as you can before time runs out</span>
+                </button>
+                
+                <button class="btn btn-primary" onclick="startStudyMode()">
+                    📚 Study Mode
+                    <span class="btn-subtitle">View all questions with answers</span>
+                </button>
+                
+                <button class="btn btn-primary" onclick="showStatistics()">
+                    📊 View Statistics
+                    <span class="btn-subtitle">Track your progress</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Timer Setup Screen -->
+        <div id="timer-setup-screen" class="screen hidden">
+            <div class="header">
+                <h2>⏱️ Time Challenge Setup</h2>
+                <p class="subtitle">How long do you want to practice?</p>
+            </div>
+            
+            <div class="timer-input-container">
+                <div class="time-input-group">
+                    <label for="minutes-input">Minutes</label>
+                    <input type="number" id="minutes-input" min="0" max="60" value="5" placeholder="0">
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-input-group">
+                    <label for="seconds-input">Seconds</label>
+                    <input type="number" id="seconds-input" min="0" max="59" value="0" placeholder="0">
+                </div>
+            </div>
+            
+            <div class="timer-presets">
+                <button class="preset-btn" onclick="setTimerPreset(1, 0)">1 min</button>
+                <button class="preset-btn" onclick="setTimerPreset(2, 0)">2 min</button>
+                <button class="preset-btn" onclick="setTimerPreset(3, 0)">3 min</button>
+                <button class="preset-btn" onclick="setTimerPreset(5, 0)">5 min</button>
+                <button class="preset-btn" onclick="setTimerPreset(10, 0)">10 min</button>
+            </div>
+            
+            <button class="btn btn-primary btn-start-timer" onclick="startTimerModeFromInput()">
+                Start Challenge
+            </button>
+            
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Timer Challenge Screen -->
+        <div id="timer-screen" class="screen hidden">
+            <div class="header">
+                <h2>⏱️ Time Challenge</h2>
+                <div class="timer-display">
+                    <span id="timer-countdown">0:00</span>
+                </div>
+                <div class="timer-stats">
+                    <span id="timer-question-count">Questions: 0</span>
+                    <span class="timer-separator">|</span>
+                    <span id="timer-correct-count">Correct: 0</span>
+                </div>
+            </div>
+
+            <div id="timer-question-container" class="question-container">
+                <!-- Question content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="skipTimerQuestion()">Skip</button>
+                <button class="btn btn-primary" id="timer-submit-answer" onclick="submitTimerAnswer()">Submit Answer</button>
+                <button class="btn btn-secondary hidden" id="timer-next-question" onclick="nextTimerQuestion()">Next Question</button>
+            </div>
+
+            <button class="btn-back" onclick="quitTimerMode()">← End Challenge</button>
+        </div>
+
+        <!-- Practice Mode Screen -->
+        <div id="practice-screen" class="screen hidden">
+            <div class="header">
+                <h2>Practice Mode</h2>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+                <p id="question-counter" class="question-counter">Question 1/15</p>
+            </div>
+
+            <div id="question-container" class="question-container">
+                <!-- Question content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="skipQuestion()">Skip</button>
+                <button class="btn btn-primary" id="submit-answer" onclick="submitAnswer()">Submit Answer</button>
+                <button class="btn btn-secondary hidden" id="next-question" onclick="nextQuestion()">Next Question</button>
+            </div>
+
+            <button class="btn-back" onclick="quitPractice()">← Back to Menu</button>
+        </div>
+
+        <!-- Study Mode Screen -->
+        <div id="study-screen" class="screen hidden">
+            <div class="header">
+                <h2>Study Mode</h2>
+                <p id="study-counter" class="question-counter">Question 1/45</p>
+            </div>
+
+            <div id="study-container" class="question-container">
+                <!-- Study content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="previousStudyQuestion()" id="prev-study">← Previous</button>
+                <button class="btn btn-primary" onclick="nextStudyQuestion()" id="next-study">Next →</button>
+            </div>
+
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Statistics Screen -->
+        <div id="stats-screen" class="screen hidden">
+            <div class="header">
+                <h2>📊 Your Practice Statistics</h2>
+            </div>
+
+            <div id="stats-container" class="stats-container">
+                <!-- Stats will be inserted here -->
+            </div>
+
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="screen hidden">
+            <div class="header">
+                <h2>🏆 Practice Complete!</h2>
+            </div>
+
+            <div id="results-container" class="results-container">
+                <!-- Results will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="startPracticeMode()">Practice Again</button>
+                <button class="btn btn-secondary" onclick="backToMenu()">Back to Menu</button>
+            </div>
+        </div>
+
+        <!-- Timer Results Screen -->
+        <div id="timer-results-screen" class="screen hidden">
+            <div class="header">
+                <h2>⏱️ Time Challenge Complete!</h2>
+            </div>
+
+            <div id="timer-results-container" class="results-container">
+                <!-- Timer results will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="showTimerSetup()">Try Again</button>
+                <button class="btn btn-secondary" onclick="backToMenu()">Back to Menu</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
