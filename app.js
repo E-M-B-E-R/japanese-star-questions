@@ -164,11 +164,36 @@ function backToMenu() {
     }, 50);
 }
 
+// Show practice setup screen
+function showPracticeSetup() {
+    showScreen('practice-setup-screen');
+    document.getElementById('question-count-input').value = 15;
+}
+
+// Start practice mode with specified question count
+function startPracticeModeWithCount() {
+    let count = parseInt(document.getElementById('question-count-input').value);
+    
+    // Validate input
+    if (!count || count < 1) {
+        alert('Please enter at least 1 question!');
+        document.getElementById('question-count-input').value = 15;
+        return;
+    }
+    
+    if (count > 51) {
+        count = 51;
+        document.getElementById('question-count-input').value = 51;
+    }
+    
+    startPracticeMode(count);
+}
+
 // Start practice mode
-function startPracticeMode() {
-    // Shuffle and select 15 random questions
+function startPracticeMode(questionCount = 15) {
+    // Shuffle and select random questions
     const shuffled = [...PRACTICE_QUESTIONS].sort(() => Math.random() - 0.5);
-    practiceQuestions = shuffled.slice(0, 15);
+    practiceQuestions = shuffled.slice(0, questionCount);
     currentQuestionIndex = 0;
     score = 0;
     selectedOrder = [];

@@ -21,9 +21,9 @@
             </div>
             
             <div class="menu-buttons">
-                <button class="btn btn-primary" onclick="startPracticeMode()">
+                <button class="btn btn-primary" onclick="showPracticeSetup()">
                     📝 Practice Mode
-                    <span class="btn-subtitle" tabindex="-1">Interactive quiz with 15 random questions</span>
+                    <span class="btn-subtitle" tabindex="-1">Interactive quiz with customizable question count</span>
                 </button>
                 
                 <button class="btn btn-primary" onclick="showTimerSetup()">
@@ -92,6 +92,27 @@
                 <button class="btn btn-primary" id="debug-submit-answer" onclick="submitDebugAnswer()">Submit</button>
                 <button class="btn btn-secondary hidden" id="debug-next-question" onclick="returnToDebugMenu()">Back to Debug Menu</button>
             </div>
+
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Practice Mode Setup Screen -->
+        <div id="practice-setup-screen" class="screen hidden">
+            <div class="header">
+                <h2>📝 Practice Mode Setup</h2>
+                <p class="subtitle">How many questions would you like to practice?</p>
+            </div>
+            
+            <div class="timer-input-container">
+                <div class="time-input-group">
+                    <label for="question-count-input">Number of Questions</label>
+                    <input type="number" id="question-count-input" min="1" max="51" value="15" placeholder="15">
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-start-timer" onclick="startPracticeModeWithCount()">
+                Start Practice
+            </button>
 
             <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
         </div>
