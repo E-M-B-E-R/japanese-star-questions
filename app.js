@@ -85,7 +85,7 @@ function saveStats(stats) {
 // Record an answer
 function recordAnswer(question, isCorrect) {
     const stats = loadStats();
-    const key = `${question.beforeStar}★${question.afterStar}`;
+    const key = `${question.beforeStar} ${question.afterStar}`;
     
     // Find question number
     const questionNumber = PRACTICE_QUESTIONS.findIndex(q => 
@@ -94,16 +94,11 @@ function recordAnswer(question, isCorrect) {
         JSON.stringify(q.correctOrder) === JSON.stringify(question.correctOrder)
     ) + 1;
     
-    // Build the complete answer
+    // Build the complete answer without stars
     const correctSequence = question.correctOrder.map(i => question.options[i - 1]);
-    const starPosition = 2;
     let fullAnswer = question.beforeStar + ' ';
-    correctSequence.forEach((word, idx) => {
-        if (idx === starPosition) {
-            fullAnswer += `★${word}★ `;
-        } else {
-            fullAnswer += `${word} `;
-        }
+    correctSequence.forEach((word) => {
+        fullAnswer += `${word} `;
     });
     fullAnswer += question.afterStar;
     
@@ -207,10 +202,10 @@ function displayPracticeQuestion() {
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
         html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
-        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     } else {
         html += `<div class="dialogue-label">Arrange the words in the correct order:</div>`;
-        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     }
     
     html += '</div>';
@@ -293,9 +288,6 @@ function submitAnswer() {
 function showAnswer(question, isCorrect) {
     const container = document.getElementById('question-container');
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
-    // The star is always at position index 2 (third position: ___ ___ ★ ___)
-    // We need to find which word is at that position in correctOrder
-    const starPosition = 2; // Third position in the sequence
     
     let answerHtml = `<div class="answer-section ${isCorrect ? 'correct' : 'incorrect'}">`;
     answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
@@ -308,12 +300,8 @@ function showAnswer(question, isCorrect) {
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
     
-    correctSequence.forEach((word, idx) => {
-        if (idx === starPosition) {
-            answerHtml += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
-        } else {
-            answerHtml += `${parseRuby(word)} `;
-        }
+    correctSequence.forEach((word) => {
+        answerHtml += `${parseRuby(word)} `;
     });
     
     answerHtml += parseRuby(question.afterStarFurigana);
@@ -503,10 +491,10 @@ function displayTimerQuestion() {
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
         html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
-        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     } else {
         html += `<div class="dialogue-label">Arrange the words in the correct order:</div>`;
-        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     }
     
     html += '</div>';
@@ -601,7 +589,6 @@ function showTimerAnswer(question, isCorrect) {
     const container = document.getElementById('timer-question-container');
     
     const correctSequence = question.correctOrder.map(idx => question.optionsFurigana[idx - 1]);
-    const starPosition = 2; // Star is always at position 2
     
     let answerHtml = '<div class="answer-section ' + (isCorrect ? 'correct' : 'incorrect') + '">';
     answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
@@ -614,12 +601,8 @@ function showTimerAnswer(question, isCorrect) {
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
     
-    correctSequence.forEach((word, idx) => {
-        if (idx === starPosition) {
-            answerHtml += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
-        } else {
-            answerHtml += `${parseRuby(word)} `;
-        }
+    correctSequence.forEach((word) => {
+        answerHtml += `${parseRuby(word)} `;
     });
     
     answerHtml += parseRuby(question.afterStarFurigana);
@@ -720,12 +703,8 @@ function showTimerResults() {
             html += q.isDialogue ? 'B: ' : '';
             html += parseRuby(q.beforeStarFurigana) + ' ';
             
-            correctSequence.forEach((word, wordIdx) => {
-                if (wordIdx === starPosition) {
-                    html += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
-                } else {
-                    html += `${parseRuby(word)} `;
-                }
+            correctSequence.forEach((word) => {
+                html += `${parseRuby(word)} `;
             });
             
             html += parseRuby(q.afterStarFurigana);
@@ -835,9 +814,9 @@ function displayReviewQuestion() {
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Dialogue Question:</div>`;
         html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
-        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     } else {
-        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     }
     
     html += '</div><h4 style="margin-top: 20px;">Options:</h4><div class="options-grid">';
@@ -850,8 +829,6 @@ function displayReviewQuestion() {
     
     // Show answer immediately in review mode
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
-    // The star is always at position index 2 (third position: ___ ___ ★ ___)
-    const starPosition = 2;
     
     html += '<div class="answer-section correct">';
     html += '<div class="answer-header">✅ Correct Answer</div>';
@@ -864,12 +841,8 @@ function displayReviewQuestion() {
     html += question.isDialogue ? 'B: ' : '';
     html += parseRuby(question.beforeStarFurigana) + ' ';
     
-    correctSequence.forEach((word, idx) => {
-        if (idx === starPosition) {
-            html += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
-        } else {
-            html += `${parseRuby(word)} `;
-        }
+    correctSequence.forEach((word) => {
+        html += `${parseRuby(word)} `;
     });
     
     html += parseRuby(question.afterStarFurigana);
@@ -1047,10 +1020,10 @@ function displayDebugQuestion() {
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
         html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
-        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     } else {
         html += `<div class="dialogue-label">Arrange the words in the correct order:</div>`;
-        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
     }
     
     html += '</div>';
@@ -1126,7 +1099,6 @@ function submitDebugAnswer() {
 function showDebugAnswer(question, isCorrect) {
     const container = document.getElementById('debug-question-container');
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
-    const starPosition = 2;
     
     let answerHtml = `<div class="answer-section ${isCorrect ? 'correct' : 'incorrect'}">`;
     answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
@@ -1139,12 +1111,8 @@ function showDebugAnswer(question, isCorrect) {
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
     
-    correctSequence.forEach((word, idx) => {
-        if (idx === starPosition) {
-            answerHtml += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
-        } else {
-            answerHtml += `${parseRuby(word)} `;
-        }
+    correctSequence.forEach((word) => {
+        answerHtml += `${parseRuby(word)} `;
     });
     
     answerHtml += parseRuby(question.afterStarFurigana);
