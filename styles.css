@@ -229,6 +229,14 @@ body.dark-mode .btn-secondary:hover {
     border-color: #ffb74d;
 }
 
+.btn-compact {
+    padding: 10px 16px;
+    font-size: 0.95em;
+    min-width: 100px;
+    flex: 1 1 auto;
+    white-space: nowrap;
+}
+
 .btn-subtitle {
     font-size: 0.85em;
     font-weight: 400;
@@ -265,9 +273,7 @@ span:focus {
     transition: all 0.3s ease;
     outline: none;
     margin-top: 20px;
-    display: block;
-    margin-left: auto;
-    margin-right: auto;
+    display: inline-block;
 }
 
 .btn-back:focus {
@@ -628,6 +634,36 @@ body.dark-mode .stats-list h3 {
 body.dark-mode .stat-question {
     background: rgba(50, 30, 20, 0.8);
     color: #f5f5f5;
+}
+
+.stat-question-selectable {
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+}
+
+.stat-question-selectable:hover {
+    background: #e9ecef;
+    transform: translateX(3px);
+}
+
+body.dark-mode .stat-question-selectable:hover {
+    background: rgba(60, 35, 25, 0.9);
+}
+
+.stat-checkbox {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 3px;
+    cursor: pointer;
+    accent-color: #ff6b35;
+}
+
+.stat-question-content {
+    flex: 1;
 }
 
 .stat-question.weak {

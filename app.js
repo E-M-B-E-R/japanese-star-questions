@@ -7,6 +7,7 @@ let practiceQuestions = [];
 let selectedOrder = [];
 let score = 0;
 let currentAnswer = null;
+let practiceAnsweredQuestions = [];
 
 // Timer mode state
 let timerSeconds = 0;
@@ -170,6 +171,7 @@ function startPracticeMode() {
     currentQuestionIndex = 0;
     score = 0;
     selectedOrder = [];
+    practiceAnsweredQuestions = [];
     
     showScreen('practice-screen');
     displayPracticeQuestion();
@@ -274,6 +276,13 @@ function submitAnswer() {
         score++;
     }
     
+    // Store question details for results
+    practiceAnsweredQuestions.push({
+        question: question,
+        userAnswer: selectedOrder,
+        isCorrect: isCorrect
+    });
+    
     // Record the answer
     recordAnswer(question, isCorrect);
     
@@ -352,6 +361,14 @@ function skipQuestion() {
     submitBtn.disabled = true;
     
     const question = practiceQuestions[currentQuestionIndex];
+    
+    // Store skipped question details for results
+    practiceAnsweredQuestions.push({
+        question: question,
+        userAnswer: [],
+        isCorrect: false
+    });
+    
     showAnswer(question, false);
     submitBtn.classList.add('hidden');
     document.getElementById('next-question').classList.remove('hidden');
@@ -375,11 +392,60 @@ function showResults() {
         message = "💪 Keep studying! Practice makes perfect!";
     }
     
-    container.innerHTML = `
+    let html = `
         <div class="score-display">${score}/${practiceQuestions.length}</div>
         <div class="results-message">${percentage}% Correct</div>
         <div class="results-message">${message}</div>
     `;
+    
+    // Show incorrect questions if any
+    const incorrectAnswers = practiceAnsweredQuestions.filter(a => !a.isCorrect);
+    if (incorrectAnswers.length > 0) {
+        html += `
+            <div style="margin-top: 30px; text-align: left; max-width: 800px; margin-left: auto; margin-right: auto;">
+                <h3 style="color: #dc3545; margin-bottom: 20px;">Questions to Review (${incorrectAnswers.length}):</h3>
+        `;
+        
+        incorrectAnswers.forEach(({question, userAnswer}) => {
+            const questionNumber = PRACTICE_QUESTIONS.findIndex(q => 
+                q.beforeStar === question.beforeStar && q.translation === question.translation
+            ) + 1;
+            
+            const correctSequence = question.correctOrder.map(idx => question.optionsFurigana[idx - 1]);
+            
+            html += `
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #dc3545;">
+                    <div style="color: #ff6b35; font-weight: bold; margin-bottom: 10px;">Question #${questionNumber}</div>
+            `;
+            
+            if (question.isDialogue) {
+                html += `<div style="margin-bottom: 10px;"><strong>A:</strong> ${parseRuby(question.speakerAFurigana)}</div>`;
+                html += `<div style="margin-bottom: 10px;"><strong>B:</strong> ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+            } else {
+                html += `<div style="margin-bottom: 10px;">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+            }
+            
+            html += `<div style="color: #666; margin-bottom: 15px; font-style: italic;">${question.translation}</div>`;
+            
+            html += `<div style="font-weight: bold; color: #28a745; margin-bottom: 5px;">Correct Answer:</div>`;
+            html += `<div style="margin-bottom: 10px;">`;
+            if (question.isDialogue) {
+                html += `<strong>B:</strong> `;
+            }
+            html += parseRuby(question.beforeStarFurigana) + ' ';
+            correctSequence.forEach(word => {
+                html += parseRuby(word) + ' ';
+            });
+            html += parseRuby(question.afterStarFurigana);
+            html += `</div>`;
+            
+            html += `</div>`;
+        });
+        
+        html += `</div>`;
+    }
+    
+    container.innerHTML = html;
 }
 
 // Quit practice
@@ -919,10 +985,13 @@ function nextReviewQuestion() {
 }
 
 // Statistics
+let selectedStatsQuestions = new Set();
+
 function showStatistics() {
     showScreen('stats-screen');
     const container = document.getElementById('stats-container');
     const stats = loadStats();
+    selectedStatsQuestions.clear();
     
     if (Object.keys(stats).length === 0) {
         container.innerHTML = `
@@ -932,8 +1001,11 @@ function showStatistics() {
                 <p>Start practicing to build your stats.</p>
             </div>
         `;
+        document.getElementById('stats-practice-controls').style.display = 'none';
         return;
     }
+    
+    document.getElementById('stats-practice-controls').style.display = 'block';
     
     // Calculate overall stats
     let totalAttempts = 0;
@@ -981,22 +1053,26 @@ function showStatistics() {
     
     html += '<div class="stats-list"><h3>📝 Questions Needing Practice</h3>';
     
-    sortedStats.slice(0, 10).forEach(([key, data]) => {
+    sortedStats.forEach(([key, data]) => {
         const acc = (data.correct / data.total * 100).toFixed(1);
         const classType = acc < 50 ? 'weak' : acc < 80 ? 'medium' : 'strong';
         const icon = acc < 50 ? '✕' : acc < 80 ? '⚠️' : '◯';
-        const displayText = data.fullAnswer || key; // Use full answer if available, otherwise fall back to key
-        const questionNum = data.questionNumber ? `<span style="color: #ff6b35; font-weight: bold;">Question #${data.questionNumber}:</span> ` : '';
+        const displayText = data.fullAnswer || key;
+        const questionNum = data.questionNumber || 0;
+        const questionNumDisplay = questionNum ? `<span style="color: #ff6b35; font-weight: bold;">Question #${questionNum}:</span> ` : '';
         
         html += `
-            <div class="stat-question ${classType}">
-                <div class="stat-question-text">${questionNum}${icon} ${displayText}</div>
-                <div style="color: #666; margin: 5px 0;">${data.translation}</div>
-                <div class="stat-details">
-                    <span>Attempts: ${data.total}</span>
-                    <span>Correct: ${data.correct}</span>
-                    <span>Incorrect: ${data.incorrect}</span>
-                    <span>Accuracy: ${acc}%</span>
+            <div class="stat-question ${classType} stat-question-selectable" data-question-num="${questionNum}" data-accuracy="${acc}" onclick="toggleStatQuestion(${questionNum})">
+                <input type="checkbox" class="stat-checkbox" id="stat-check-${questionNum}" onclick="event.stopPropagation();">
+                <div class="stat-question-content">
+                    <div class="stat-question-text">${questionNumDisplay}${icon} ${displayText}</div>
+                    <div style="color: #666; margin: 5px 0;">${data.translation}</div>
+                    <div class="stat-details">
+                        <span>Attempts: ${data.total}</span>
+                        <span>Correct: ${data.correct}</span>
+                        <span>Incorrect: ${data.incorrect}</span>
+                        <span>Accuracy: ${acc}%</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -1004,6 +1080,7 @@ function showStatistics() {
     
     html += '</div>';
     container.innerHTML = html;
+    updateStatsPracticeButton();
 }
 
 // Clear all statistics
@@ -1012,6 +1089,89 @@ function clearStatistics() {
         localStorage.removeItem(STATS_KEY);
         showStatistics(); // Refresh the display
     }
+}
+
+// Toggle question selection in statistics
+function toggleStatQuestion(questionNum) {
+    if (!questionNum) return;
+    
+    const checkbox = document.getElementById(`stat-check-${questionNum}`);
+    if (!checkbox) return;
+    
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        selectedStatsQuestions.add(questionNum);
+    } else {
+        selectedStatsQuestions.delete(questionNum);
+    }
+    
+    updateStatsPracticeButton();
+}
+
+// Select questions with accuracy < 60%
+function selectLowAccuracyQuestions() {
+    selectedStatsQuestions.clear();
+    
+    const questionCards = document.querySelectorAll('.stat-question-selectable');
+    questionCards.forEach(card => {
+        const accuracy = parseFloat(card.dataset.accuracy);
+        const questionNum = parseInt(card.dataset.questionNum);
+        const checkbox = document.getElementById(`stat-check-${questionNum}`);
+        
+        if (accuracy < 60 && checkbox) {
+            checkbox.checked = true;
+            selectedStatsQuestions.add(questionNum);
+        } else if (checkbox) {
+            checkbox.checked = false;
+        }
+    });
+    
+    updateStatsPracticeButton();
+}
+
+// Update practice button text
+function updateStatsPracticeButton() {
+    const button = document.getElementById('start-stats-practice');
+    const clearButton = document.getElementById('clear-stats-selection');
+    const count = selectedStatsQuestions.size;
+    
+    if (count === 0) {
+        button.style.display = 'none';
+        clearButton.style.display = 'none';
+        button.disabled = true;
+    } else {
+        button.style.display = 'block';
+        clearButton.style.display = 'block';
+        button.textContent = 'Practice Selected';
+        button.disabled = false;
+    }
+}
+
+// Start practice with selected questions
+function startStatsPractice() {
+    if (selectedStatsQuestions.size === 0) {
+        alert('Please select at least one question to practice');
+        return;
+    }
+    
+    // Get selected questions from PRACTICE_QUESTIONS
+    const questionNumbers = Array.from(selectedStatsQuestions).sort((a, b) => a - b);
+    practiceQuestions = questionNumbers.map(num => PRACTICE_QUESTIONS[num - 1]).filter(q => q);
+    
+    if (practiceQuestions.length === 0) {
+        alert('Error loading questions');
+        return;
+    }
+    
+    // Initialize practice mode
+    currentQuestionIndex = 0;
+    score = 0;
+    selectedOrder = [];
+    practiceAnsweredQuestions = [];
+    
+    showScreen('practice-screen');
+    displayPracticeQuestion();
 }
 
 // ==================== DEBUG MODE FUNCTIONS ====================

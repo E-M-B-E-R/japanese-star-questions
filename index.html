@@ -177,7 +177,7 @@
                 <button class="btn btn-secondary hidden" id="next-question" onclick="nextQuestion()">Next Question</button>
             </div>
 
-            <button class="btn-back" onclick="quitPractice()">← Back to Menu</button>
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
         </div>
 
         <!-- Review List Screen -->
@@ -223,9 +223,17 @@
                 <!-- Stats will be inserted here -->
             </div>
 
-            <div class="button-group">
-                <button class="btn btn-secondary" onclick="clearStatistics()">🗑️ Clear Statistics</button>
+            <div id="stats-practice-controls" style="display: none; margin: 20px 0;">
+                <div class="button-group" style="gap: 10px;">
+                    <button class="btn btn-secondary btn-compact" onclick="selectLowAccuracyQuestions()">Select hard questions</button>
+                    <button id="start-stats-practice" class="btn btn-primary btn-compact" onclick="startStatsPractice()" style="display: none;" disabled>Practice Selected</button>
+                    <button id="clear-stats-selection" class="btn btn-secondary btn-compact" onclick="selectedStatsQuestions.clear(); document.querySelectorAll('.stat-checkbox').forEach(cb => cb.checked = false); updateStatsPracticeButton();" style="display: none;">Clear Selection</button>
+                </div>
+            </div>
+
+            <div class="button-group" style="justify-content: space-between;">
                 <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+                <button class="btn-back" onclick="clearStatistics()">🗑️ Clear Statistics</button>
             </div>
         </div>
 
