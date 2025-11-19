@@ -1079,3 +1079,43 @@ body.dark-mode .incorrect-item .translation {
         display: none;
     }
 }
+
+/* Confetti Animation */
+.confetti-piece, .confetti-leaf, .confetti-circle {
+    position: fixed;
+    top: -20px;
+    width: 10px;
+    height: 10px;
+    z-index: 10000;
+    pointer-events: none;
+    animation: confetti-fall linear forwards;
+}
+
+.confetti-piece {
+    width: 8px;
+    height: 15px;
+    border-radius: 2px;
+}
+
+.confetti-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.confetti-leaf {
+    background: transparent !important;
+    width: auto;
+    height: auto;
+}
+
+@keyframes confetti-fall {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(100vh) rotate(720deg);
+        opacity: 0.5;
+    }
+}

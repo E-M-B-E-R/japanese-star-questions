@@ -689,8 +689,9 @@ function endTimerMode() {
         timerInterval = null;
     }
     
-    // Show results
+    // Show results and trigger confetti
     showTimerResults();
+    triggerFallConfetti();
 }
 
 // Show timer results
@@ -1198,6 +1199,64 @@ function returnToDebugMenu() {
 }
 
 // ==================== END DEBUG MODE FUNCTIONS ====================
+
+// ==================== CONFETTI FUNCTIONS ====================
+
+function triggerFallConfetti() {
+    const duration = 3000; // 3 seconds
+    const animationEnd = Date.now() + duration;
+    const colors = ['#dc143c', '#8b4513', '#ffa500', '#ff8c00', '#cd853f', '#ff6347'];
+    
+    const confettiInterval = setInterval(() => {
+        const timeLeft = animationEnd - Date.now();
+        
+        if (timeLeft <= 0) {
+            clearInterval(confettiInterval);
+            return;
+        }
+        
+        // Create multiple confetti pieces per interval
+        for (let i = 0; i < 3; i++) {
+            createConfettiPiece(colors);
+        }
+    }, 50);
+}
+
+function createConfettiPiece(colors) {
+    const confetti = document.createElement('div');
+    const rand = Math.random();
+    const isLeaf = rand > 0.75; // 25% leaves
+    const isCircle = rand > 0.60 && rand <= 0.75; // 15% circles
+    // Remaining 60% are rectangles
+    
+    if (isLeaf) {
+        confetti.className = 'confetti-leaf';
+    } else if (isCircle) {
+        confetti.className = 'confetti-circle';
+    } else {
+        confetti.className = 'confetti-piece';
+    }
+    
+    confetti.style.left = Math.random() * 100 + '%';
+    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+    
+    if (isLeaf) {
+        // Leaf shape using emoji
+        confetti.innerHTML = '🍂';
+        confetti.style.fontSize = (Math.random() * 15 + 20) + 'px';
+    }
+    
+    document.body.appendChild(confetti);
+    
+    // Remove confetti after animation
+    setTimeout(() => {
+        confetti.remove();
+    }, 4000);
+}
+
+// ==================== END CONFETTI FUNCTIONS ====================
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
