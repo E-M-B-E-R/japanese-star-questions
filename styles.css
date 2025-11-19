@@ -205,6 +205,9 @@ body.dark-mode .btn-secondary:hover {
     font-size: 0.85em;
     font-weight: 400;
     opacity: 0.9;
+    user-select: none;
+    cursor: pointer;
+    pointer-events: none;
 }
 
 .btn-back {
