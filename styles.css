@@ -264,6 +264,10 @@ span:focus {
     font-weight: 600;
     transition: all 0.3s ease;
     outline: none;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .btn-back:focus {
@@ -549,8 +553,10 @@ body.dark-mode .explanation strong {
 }
 
 .button-group .btn {
-    flex: 1;
+    flex: 1 1 0;
     max-width: 200px;
+    min-width: 120px;
+    white-space: nowrap;
 }
 
 .stats-container {
@@ -1033,10 +1039,19 @@ body.dark-mode .incorrect-item .translation {
     
     .button-group {
         flex-direction: column;
+        align-items: center;
     }
     
     .button-group .btn {
         max-width: 100%;
+        width: 100%;
+        min-width: auto;
+    }
+    
+    .btn-back {
+        margin-top: 30px;
+        max-width: 100%;
+        text-align: center;
     }
     
     .stats-grid {
