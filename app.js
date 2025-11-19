@@ -87,6 +87,13 @@ function recordAnswer(question, isCorrect) {
     const stats = loadStats();
     const key = `${question.beforeStar}★${question.afterStar}`;
     
+    // Find question number
+    const questionNumber = PRACTICE_QUESTIONS.findIndex(q => 
+        q.beforeStar === question.beforeStar && 
+        q.afterStar === question.afterStar &&
+        JSON.stringify(q.correctOrder) === JSON.stringify(question.correctOrder)
+    ) + 1;
+    
     // Build the complete answer
     const correctSequence = question.correctOrder.map(i => question.options[i - 1]);
     const starPosition = 2;
@@ -106,7 +113,8 @@ function recordAnswer(question, isCorrect) {
             incorrect: 0,
             total: 0,
             translation: question.translation,
-            fullAnswer: fullAnswer
+            fullAnswer: fullAnswer,
+            questionNumber: questionNumber
         };
     }
     
@@ -576,7 +584,7 @@ function submitTimerAnswer() {
 function showTimerAnswer(question, isCorrect) {
     const container = document.getElementById('timer-question-container');
     
-    const correctSequence = question.correctOrder.map(idx => question.optionsFurigana[idx]);
+    const correctSequence = question.correctOrder.map(idx => question.optionsFurigana[idx - 1]);
     const starPosition = 2; // Star is always at position 2
     
     let answerHtml = '<div class="answer-section ' + (isCorrect ? 'correct' : 'incorrect') + '">';
@@ -682,7 +690,7 @@ function showTimerResults() {
         
         incorrectAnswers.forEach((answer, idx) => {
             const q = answer.question;
-            const correctSequence = q.correctOrder.map(i => q.optionsFurigana[i]);
+            const correctSequence = q.correctOrder.map(i => q.optionsFurigana[i - 1]);
             const starPosition = 2;
             
             html += '<div class="incorrect-item">';
@@ -903,10 +911,11 @@ function showStatistics() {
         const classType = acc < 50 ? 'weak' : acc < 80 ? 'medium' : 'strong';
         const icon = acc < 50 ? '❌' : acc < 80 ? '⚠️' : '✅';
         const displayText = data.fullAnswer || key; // Use full answer if available, otherwise fall back to key
+        const questionNum = data.questionNumber ? `<span style="color: #ff6b35; font-weight: bold;">Question #${data.questionNumber}:</span> ` : '';
         
         html += `
             <div class="stat-question ${classType}">
-                <div class="stat-question-text">${icon} ${displayText}</div>
+                <div class="stat-question-text">${questionNum}${icon} ${displayText}</div>
                 <div style="color: #666; margin: 5px 0;">${data.translation}</div>
                 <div class="stat-details">
                     <span>Attempts: ${data.total}</span>
@@ -929,6 +938,179 @@ function clearStatistics() {
         showStatistics(); // Refresh the display
     }
 }
+
+// ==================== DEBUG MODE FUNCTIONS ====================
+
+let debugQuestionNumber = 0;
+let debugSelectedOrder = [];
+
+// Show debug mode screen
+function showDebugMode() {
+    showScreen('debug-screen');
+}
+
+// Start debug question
+function startDebugQuestion() {
+    const questionNum = parseInt(document.getElementById('debug-question-input').value);
+    
+    if (!questionNum || questionNum < 1 || questionNum > PRACTICE_QUESTIONS.length) {
+        alert(`Please enter a question number between 1 and ${PRACTICE_QUESTIONS.length}`);
+        return;
+    }
+    
+    debugQuestionNumber = questionNum;
+    debugSelectedOrder = [];
+    
+    showScreen('debug-question-screen');
+    displayDebugQuestion();
+}
+
+// Display debug question
+function displayDebugQuestion() {
+    const question = PRACTICE_QUESTIONS[debugQuestionNumber - 1];
+    const container = document.getElementById('debug-question-container');
+    
+    // Update counter
+    document.getElementById('debug-counter').textContent = `Question #${debugQuestionNumber}`;
+    
+    // Reset selected order
+    debugSelectedOrder = [];
+    
+    // Build question HTML
+    let html = '<div class="question-display">';
+    
+    if (question.isDialogue) {
+        html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
+        html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
+        html += `<div class="question-text">B: ${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+    } else {
+        html += `<div class="dialogue-label">Arrange the words in the correct order:</div>`;
+        html += `<div class="question-text">${parseRuby(question.beforeStarFurigana)} ___ ___ <span class="star-placeholder">★</span> ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+    }
+    
+    html += '</div>';
+    html += '<div class="options-grid">';
+    
+    question.optionsFurigana.forEach((option, index) => {
+        html += `<div class="option-card" onclick="selectDebugOption(${index + 1})" id="debug-option-${index + 1}">
+            ${parseRuby(option)}
+            <span class="order-number hidden" id="debug-order-${index + 1}"></span>
+        </div>`;
+    });
+    
+    html += '</div>';
+    
+    container.innerHTML = html;
+    
+    // Show/hide buttons and re-enable submit button
+    const submitBtn = document.getElementById('debug-submit-answer');
+    submitBtn.classList.remove('hidden');
+    submitBtn.disabled = false;
+    document.getElementById('debug-next-question').classList.add('hidden');
+}
+
+// Select an option in debug mode
+function selectDebugOption(optionNum) {
+    const optionCard = document.getElementById(`debug-option-${optionNum}`);
+    const orderSpan = document.getElementById(`debug-order-${optionNum}`);
+    
+    // If already selected, deselect
+    const currentIndex = debugSelectedOrder.indexOf(optionNum);
+    if (currentIndex !== -1) {
+        debugSelectedOrder.splice(currentIndex, 1);
+        optionCard.classList.remove('selected');
+        orderSpan.classList.add('hidden');
+        
+        // Update remaining order numbers
+        debugSelectedOrder.forEach((num, idx) => {
+            document.getElementById(`debug-order-${num}`).textContent = idx + 1;
+        });
+    } else if (debugSelectedOrder.length < 4) {
+        // Add to selection
+        debugSelectedOrder.push(optionNum);
+        optionCard.classList.add('selected');
+        orderSpan.textContent = debugSelectedOrder.length;
+        orderSpan.classList.remove('hidden');
+    }
+}
+
+// Submit debug answer
+function submitDebugAnswer() {
+    if (debugSelectedOrder.length !== 4) {
+        alert('Please select all 4 options in order');
+        return;
+    }
+    
+    // Disable buttons to prevent multiple submissions
+    const submitBtn = document.getElementById('debug-submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
+    const question = PRACTICE_QUESTIONS[debugQuestionNumber - 1];
+    const isCorrect = JSON.stringify(debugSelectedOrder) === JSON.stringify(question.correctOrder);
+    
+    // Show answer
+    showDebugAnswer(question, isCorrect);
+    
+    // Hide submit, show next
+    submitBtn.classList.add('hidden');
+    document.getElementById('debug-next-question').classList.remove('hidden');
+}
+
+// Show answer in debug mode
+function showDebugAnswer(question, isCorrect) {
+    const container = document.getElementById('debug-question-container');
+    const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
+    const starPosition = 2;
+    
+    let answerHtml = `<div class="answer-section ${isCorrect ? 'correct' : 'incorrect'}">`;
+    answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
+    
+    if (question.isDialogue) {
+        answerHtml += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
+    }
+    
+    answerHtml += '<div class="correct-answer">';
+    answerHtml += question.isDialogue ? 'B: ' : '';
+    answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    
+    correctSequence.forEach((word, idx) => {
+        if (idx === starPosition) {
+            answerHtml += `<span class="star-placeholder">★${parseRuby(word)}★</span> `;
+        } else {
+            answerHtml += `${parseRuby(word)} `;
+        }
+    });
+    
+    answerHtml += parseRuby(question.afterStarFurigana);
+    answerHtml += '</div>';
+    
+    answerHtml += `<div class="translation"><strong>📖 Translation:</strong> ${question.translation}</div>`;
+    answerHtml += `<div class="explanation"><strong>💡 Grammar Point:</strong> ${question.explanation}</div>`;
+    answerHtml += '</div>';
+    
+    container.innerHTML += answerHtml;
+}
+
+// Skip debug question
+function skipDebugQuestion() {
+    // Disable submit button to prevent multiple skips
+    const submitBtn = document.getElementById('debug-submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
+    const question = PRACTICE_QUESTIONS[debugQuestionNumber - 1];
+    showDebugAnswer(question, false);
+    submitBtn.classList.add('hidden');
+    document.getElementById('debug-next-question').classList.remove('hidden');
+}
+
+// Return to debug menu
+function returnToDebugMenu() {
+    showScreen('debug-screen');
+}
+
+// ==================== END DEBUG MODE FUNCTIONS ====================
 
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {

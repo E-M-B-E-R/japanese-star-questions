@@ -40,7 +40,53 @@
                     📊 View Statistics
                     <span class="btn-subtitle" tabindex="-1">Track your progress</span>
                 </button>
+                
+                <button class="btn btn-secondary" onclick="showDebugMode()">
+                    🐛 Debug Mode
+                    <span class="btn-subtitle" tabindex="-1">Test specific questions</span>
+                </button>
             </div>
+        </div>
+
+        <!-- Debug Mode Screen -->
+        <div id="debug-screen" class="screen hidden">
+            <div class="header">
+                <h2>🐛 Debug Mode</h2>
+                <p class="subtitle">Test a specific question</p>
+            </div>
+
+            <div class="timer-input-container">
+                <div class="time-input-group">
+                    <label for="debug-question-input">Question #</label>
+                    <input type="number" id="debug-question-input" min="1" max="51" value="1" placeholder="1">
+                </div>
+            </div>
+
+            <button class="btn btn-primary btn-start-timer" onclick="startDebugQuestion()">
+                Load Question
+            </button>
+
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Debug Question Screen -->
+        <div id="debug-question-screen" class="screen hidden">
+            <div class="header">
+                <h2>🐛 Debug Mode</h2>
+                <p id="debug-counter" class="question-counter">Question #1</p>
+            </div>
+
+            <div id="debug-question-container" class="question-container">
+                <!-- Question content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="skipDebugQuestion()">Skip</button>
+                <button class="btn btn-primary" id="debug-submit-answer" onclick="submitDebugAnswer()">Submit Answer</button>
+                <button class="btn btn-secondary hidden" id="debug-next-question" onclick="returnToDebugMenu()">Back to Debug Menu</button>
+            </div>
+
+            <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
         </div>
 
         <!-- Timer Setup Screen -->
