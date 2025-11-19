@@ -12,6 +12,7 @@ let currentAnswer = null;
 let timerSeconds = 0;
 let timerInterval = null;
 let timerQuestions = [];
+let timerSelectedOrder = [];
 let timerAnsweredQuestions = [];
 let timerCorrectCount = 0;
 let timerTotalCount = 0;
@@ -437,7 +438,7 @@ function startTimerMode(seconds) {
     timerAnsweredQuestions = [];
     timerCorrectCount = 0;
     timerTotalCount = 0;
-    selectedOrder = [];
+    timerSelectedOrder = [];
     
     // Show timer screen and start countdown
     showScreen('timer-screen');
@@ -500,7 +501,7 @@ function displayTimerQuestion() {
     ) + 1;
     
     // Reset selected order
-    selectedOrder = [];
+    timerSelectedOrder = [];
     
     // Build question HTML (similar to practice mode)
     let html = '<div class="question-display">';
@@ -542,29 +543,29 @@ function selectTimerOption(optionNum) {
     const orderSpan = document.getElementById(`timer-order-${optionNum}`);
     
     // If already selected, deselect
-    const currentIndex = selectedOrder.indexOf(optionNum);
+    const currentIndex = timerSelectedOrder.indexOf(optionNum);
     if (currentIndex !== -1) {
-        selectedOrder.splice(currentIndex, 1);
+        timerSelectedOrder.splice(currentIndex, 1);
         optionCard.classList.remove('selected');
         orderSpan.classList.add('hidden');
         
         // Update remaining order numbers
-        selectedOrder.forEach((num, idx) => {
+        timerSelectedOrder.forEach((num, idx) => {
             document.getElementById(`timer-order-${num}`).textContent = idx + 1;
         });
-    } else if (selectedOrder.length < 4) {
+    } else if (timerSelectedOrder.length < 4) {
         // Add to selection
-        selectedOrder.push(optionNum);
+        timerSelectedOrder.push(optionNum);
         optionCard.classList.add('selected');
         orderSpan.classList.remove('hidden');
-        orderSpan.textContent = selectedOrder.length;
+        orderSpan.textContent = timerSelectedOrder.length;
     }
 }
 
 // Submit timer answer
 function submitTimerAnswer() {
-    if (selectedOrder.length === 0) {
-        alert('Please select at least one option!');
+    if (timerSelectedOrder.length !== 4) {
+        alert('Please select all 4 options in order');
         return;
     }
     
@@ -574,8 +575,7 @@ function submitTimerAnswer() {
     submitBtn.disabled = true;
     
     const question = timerQuestions[currentQuestionIndex];
-    const userAnswer = selectedOrder.map(num => num - 1);
-    const isCorrect = arraysEqual(userAnswer, question.correctOrder);
+    const isCorrect = JSON.stringify(timerSelectedOrder) === JSON.stringify(question.correctOrder);
     
     // Record the answer
     timerTotalCount++;
@@ -586,7 +586,7 @@ function submitTimerAnswer() {
     // Store question details for final report
     timerAnsweredQuestions.push({
         question: question,
-        userAnswer: userAnswer,
+        userAnswer: timerSelectedOrder,
         isCorrect: isCorrect
     });
     
