@@ -403,6 +403,11 @@ body.dark-mode .star-placeholder {
     border-color: #d32f2f;
 }
 
+.option-card.selected rt {
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 600;
+}
+
 body.dark-mode .option-card {
     background: rgba(50, 30, 20, 0.8);
     border-color: rgba(255, 152, 0, 0.4);
@@ -416,6 +421,11 @@ body.dark-mode .option-card:hover {
 
 body.dark-mode .option-card.selected {
     background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);
+}
+
+body.dark-mode .option-card.selected rt {
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 600;
 }
 
 .option-card .order-number {
