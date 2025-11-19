@@ -300,6 +300,24 @@ function showAnswer(question, isCorrect) {
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
     
+    if (!isCorrect) {
+        // Show user's incorrect answer with wrong parts highlighted
+        const userSequence = selectedOrder.map(i => question.optionsFurigana[i - 1]);
+        userSequence.forEach((word, idx) => {
+            if (selectedOrder[idx] !== question.correctOrder[idx]) {
+                answerHtml += `<span class="incorrect-word">${parseRuby(word)}</span> `;
+            } else {
+                answerHtml += `${parseRuby(word)} `;
+            }
+        });
+        answerHtml += parseRuby(question.afterStarFurigana);
+        answerHtml += '</div>';
+        answerHtml += '<div style="margin-top: 15px; font-weight: bold; color: #28a745;">Correct order:</div>';
+        answerHtml += '<div class="correct-answer">';
+        answerHtml += question.isDialogue ? 'B: ' : '';
+        answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    }
+    
     correctSequence.forEach((word) => {
         answerHtml += `${parseRuby(word)} `;
     });
@@ -600,6 +618,24 @@ function showTimerAnswer(question, isCorrect) {
     answerHtml += '<div class="correct-answer">';
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    
+    if (!isCorrect) {
+        // Show user's incorrect answer with wrong parts highlighted
+        const userSequence = timerSelectedOrder.map(i => question.optionsFurigana[i - 1]);
+        userSequence.forEach((word, idx) => {
+            if (timerSelectedOrder[idx] !== question.correctOrder[idx]) {
+                answerHtml += `<span class="incorrect-word">${parseRuby(word)}</span> `;
+            } else {
+                answerHtml += `${parseRuby(word)} `;
+            }
+        });
+        answerHtml += parseRuby(question.afterStarFurigana);
+        answerHtml += '</div>';
+        answerHtml += '<div style="margin-top: 15px; font-weight: bold; color: #28a745;">Correct order:</div>';
+        answerHtml += '<div class="correct-answer">';
+        answerHtml += question.isDialogue ? 'B: ' : '';
+        answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    }
     
     correctSequence.forEach((word) => {
         answerHtml += `${parseRuby(word)} `;
@@ -1110,6 +1146,24 @@ function showDebugAnswer(question, isCorrect) {
     answerHtml += '<div class="correct-answer">';
     answerHtml += question.isDialogue ? 'B: ' : '';
     answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    
+    if (!isCorrect) {
+        // Show user's incorrect answer with wrong parts highlighted
+        const userSequence = debugSelectedOrder.map(i => question.optionsFurigana[i - 1]);
+        userSequence.forEach((word, idx) => {
+            if (debugSelectedOrder[idx] !== question.correctOrder[idx]) {
+                answerHtml += `<span class="incorrect-word">${parseRuby(word)}</span> `;
+            } else {
+                answerHtml += `${parseRuby(word)} `;
+            }
+        });
+        answerHtml += parseRuby(question.afterStarFurigana);
+        answerHtml += '</div>';
+        answerHtml += '<div style="margin-top: 15px; font-weight: bold; color: #28a745;">Correct order:</div>';
+        answerHtml += '<div class="correct-answer">';
+        answerHtml += question.isDialogue ? 'B: ' : '';
+        answerHtml += parseRuby(question.beforeStarFurigana) + ' ';
+    }
     
     correctSequence.forEach((word) => {
         answerHtml += `${parseRuby(word)} `;

@@ -503,6 +503,30 @@ body.dark-mode .answer-section.incorrect {
     border-left-color: #f44336;
 }
 
+.incorrect-word {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.15);
+    padding: 8px 6px 2px 6px;
+    border-radius: 4px;
+    margin: 0 2px;
+    display: inline-block;
+}
+
+.incorrect-word rt {
+    color: #dc3545;
+    background: transparent;
+}
+
+body.dark-mode .incorrect-word {
+    color: #ff6b6b;
+    background: rgba(220, 53, 69, 0.25);
+}
+
+body.dark-mode .incorrect-word rt {
+    color: #ff6b6b;
+    background: transparent;
+}
+
 .translation, .explanation {
     margin: 15px 0;
     line-height: 1.6;
