@@ -8,6 +8,7 @@ let selectedOrder = [];
 let score = 0;
 let currentAnswer = null;
 let practiceAnsweredQuestions = [];
+let isStatsPractice = false;
 
 // Timer mode state
 let timerSeconds = 0;
@@ -172,6 +173,7 @@ function startPracticeMode() {
     score = 0;
     selectedOrder = [];
     practiceAnsweredQuestions = [];
+    isStatsPractice = false;
     
     showScreen('practice-screen');
     displayPracticeQuestion();
@@ -374,6 +376,15 @@ function skipQuestion() {
     document.getElementById('next-question').classList.remove('hidden');
 }
 
+// Restart practice (goes back to stats if from stats, otherwise starts new practice)
+function restartPractice() {
+    if (isStatsPractice) {
+        showStatistics();
+    } else {
+        startPracticeMode();
+    }
+}
+
 // Show results
 function showResults() {
     showScreen('results-screen');
@@ -418,15 +429,41 @@ function showResults() {
                     <div style="color: #ff6b35; font-weight: bold; margin-bottom: 10px;">Question #${questionNumber}</div>
             `;
             
+            // Show question with blanks
             if (question.isDialogue) {
                 html += `<div style="margin-bottom: 10px;"><strong>A:</strong> ${parseRuby(question.speakerAFurigana)}</div>`;
-                html += `<div style="margin-bottom: 10px;"><strong>B:</strong> ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+                html += `<div style="margin-bottom: 15px;"><strong>B:</strong> ${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
             } else {
-                html += `<div style="margin-bottom: 10px;">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
+                html += `<div style="margin-bottom: 15px;">${parseRuby(question.beforeStarFurigana)} ___ ___ ___ ___ ${parseRuby(question.afterStarFurigana)}</div>`;
             }
             
             html += `<div style="color: #666; margin-bottom: 15px; font-style: italic;">${question.translation}</div>`;
             
+            // Show user's answer with incorrect words highlighted
+            if (userAnswer && userAnswer.length > 0) {
+                html += `<div style="font-weight: bold; color: #dc3545; margin-bottom: 5px;">Your Answer:</div>`;
+                html += `<div style="margin-bottom: 15px;">`;
+                if (question.isDialogue) {
+                    html += `<strong>B:</strong> `;
+                }
+                html += parseRuby(question.beforeStarFurigana) + ' ';
+                
+                const userSequence = userAnswer.map(i => question.optionsFurigana[i - 1]);
+                userSequence.forEach((word, idx) => {
+                    if (userAnswer[idx] !== question.correctOrder[idx]) {
+                        html += `<span style="background: rgba(220, 53, 69, 0.15); color: #dc3545; padding: 8px 6px 2px 6px; border-radius: 4px; display: inline-block; margin: 0 2px;">${parseRuby(word)}</span> `;
+                    } else {
+                        html += `${parseRuby(word)} `;
+                    }
+                });
+                
+                html += parseRuby(question.afterStarFurigana);
+                html += `</div>`;
+            } else {
+                html += `<div style="color: #999; margin-bottom: 15px; font-style: italic;">Question was skipped</div>`;
+            }
+            
+            // Show correct answer
             html += `<div style="font-weight: bold; color: #28a745; margin-bottom: 5px;">Correct Answer:</div>`;
             html += `<div style="margin-bottom: 10px;">`;
             if (question.isDialogue) {
@@ -1167,6 +1204,7 @@ function startStatsPractice() {
     score = 0;
     selectedOrder = [];
     practiceAnsweredQuestions = [];
+    isStatsPractice = true;
     
     showScreen('practice-screen');
     displayPracticeQuestion();
