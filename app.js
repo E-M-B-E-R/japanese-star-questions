@@ -184,6 +184,13 @@ function displayPracticeQuestion() {
     const question = practiceQuestions[currentQuestionIndex];
     const container = document.getElementById('question-container');
     
+    // Find question number in main array
+    const questionNumber = PRACTICE_QUESTIONS.findIndex(q => 
+        q.beforeStar === question.beforeStar && 
+        q.afterStar === question.afterStar &&
+        JSON.stringify(q.correctOrder) === JSON.stringify(question.correctOrder)
+    ) + 1;
+    
     // Update progress
     const progress = ((currentQuestionIndex + 1) / practiceQuestions.length) * 100;
     document.getElementById('progress-fill').style.width = `${progress}%`;
@@ -195,6 +202,7 @@ function displayPracticeQuestion() {
     
     // Build question HTML
     let html = '<div class="question-display">';
+    html += `<div style="color: #ff6b35; font-weight: bold; margin-bottom: 10px;">Question #${questionNumber}</div>`;
     
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
@@ -478,11 +486,19 @@ function displayTimerQuestion() {
     const question = timerQuestions[currentQuestionIndex];
     const container = document.getElementById('timer-question-container');
     
+    // Find question number in main array
+    const questionNumber = PRACTICE_QUESTIONS.findIndex(q => 
+        q.beforeStar === question.beforeStar && 
+        q.afterStar === question.afterStar &&
+        JSON.stringify(q.correctOrder) === JSON.stringify(question.correctOrder)
+    ) + 1;
+    
     // Reset selected order
     selectedOrder = [];
     
     // Build question HTML (similar to practice mode)
     let html = '<div class="question-display">';
+    html += `<div style="color: #ff6b35; font-weight: bold; margin-bottom: 10px;">Question #${questionNumber}</div>`;
     
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Complete Speaker B's response:</div>`;
@@ -766,10 +782,13 @@ function displayStudyQuestion() {
     const question = PRACTICE_QUESTIONS[studyQuestionIndex];
     const container = document.getElementById('study-container');
     
+    const questionNumber = studyQuestionIndex + 1;
+    
     document.getElementById('study-counter').textContent = 
-        `Question ${studyQuestionIndex + 1}/${PRACTICE_QUESTIONS.length}`;
+        `Question ${questionNumber}/${PRACTICE_QUESTIONS.length}`;
     
     let html = '<div class="question-display">';
+    html += `<div style="color: #ff6b35; font-weight: bold; margin-bottom: 10px;">Question #${questionNumber}</div>`;
     
     if (question.isDialogue) {
         html += `<div class="dialogue-label">Dialogue Question:</div>`;
