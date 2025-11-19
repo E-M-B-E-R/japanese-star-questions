@@ -770,21 +770,63 @@ function arraysEqual(a, b) {
 // ==================== END TIMER MODE FUNCTIONS ====================
 
 // Study mode
-let studyQuestionIndex = 0;
+let reviewQuestionIndex = 0;
 
-function startStudyMode() {
-    studyQuestionIndex = 0;
-    showScreen('study-screen');
-    displayStudyQuestion();
+function showReviewList() {
+    showScreen('review-list-screen');
+    const container = document.getElementById('review-list-container');
+    
+    let html = '<div class="question-list">';
+    
+    PRACTICE_QUESTIONS.forEach((question, index) => {
+        const questionNumber = index + 1;
+        
+        // Create the full answer without stars
+        const correctSequence = question.correctOrder.map(i => question.options[i - 1]);
+        let fullAnswer = '';
+        
+        if (question.isDialogue) {
+            fullAnswer = `${question.speakerA} / `;
+        }
+        
+        fullAnswer += question.beforeStar + ' ';
+        correctSequence.forEach((word) => {
+            fullAnswer += word + ' ';
+        });
+        fullAnswer += question.afterStar;
+        
+        // Truncate long answers
+        let preview = fullAnswer.trim();
+        if (preview.length > 80) {
+            preview = preview.substring(0, 80) + '...';
+        }
+        
+        html += `
+            <div class="review-list-item" onclick="startReviewQuestion(${index})">
+                <div class="review-item-number">Question #${questionNumber}</div>
+                <div class="review-item-preview">${preview}</div>
+                <div class="review-item-arrow">→</div>
+            </div>
+        `;
+    });
+    
+    html += '</div>';
+    container.innerHTML = html;
 }
 
-function displayStudyQuestion() {
-    const question = PRACTICE_QUESTIONS[studyQuestionIndex];
-    const container = document.getElementById('study-container');
+function startReviewQuestion(index) {
+    reviewQuestionIndex = index;
+    showScreen('review-screen');
+    displayReviewQuestion();
+}
+
+function displayReviewQuestion() {
+    const question = PRACTICE_QUESTIONS[reviewQuestionIndex];
+    const container = document.getElementById('review-container');
     
-    const questionNumber = studyQuestionIndex + 1;
+    const questionNumber = reviewQuestionIndex + 1;
     
-    document.getElementById('study-counter').textContent = 
+    document.getElementById('review-counter').textContent = 
         `Question ${questionNumber}/${PRACTICE_QUESTIONS.length}`;
     
     let html = '<div class="question-display">';
@@ -806,7 +848,7 @@ function displayStudyQuestion() {
     
     html += '</div>';
     
-    // Show answer immediately in study mode
+    // Show answer immediately in review mode
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
     // The star is always at position index 2 (third position: ___ ___ ★ ___)
     const starPosition = 2;
@@ -841,24 +883,28 @@ function displayStudyQuestion() {
     container.innerHTML = html;
     
     // Update navigation buttons
-    document.getElementById('prev-study').disabled = studyQuestionIndex === 0;
-    document.getElementById('next-study').textContent = 
-        studyQuestionIndex === PRACTICE_QUESTIONS.length - 1 ? 'Finish' : 'Next →';
+    document.getElementById('prev-review').disabled = reviewQuestionIndex === 0;
+    document.getElementById('next-review').textContent = 
+        reviewQuestionIndex === PRACTICE_QUESTIONS.length - 1 ? 'Finish' : 'Next →';
 }
 
-function previousStudyQuestion() {
-    if (studyQuestionIndex > 0) {
-        studyQuestionIndex--;
-        displayStudyQuestion();
+function backToReviewList() {
+    showScreen('review-list-screen');
+}
+
+function previousReviewQuestion() {
+    if (reviewQuestionIndex > 0) {
+        reviewQuestionIndex--;
+        displayReviewQuestion();
     }
 }
 
-function nextStudyQuestion() {
-    if (studyQuestionIndex < PRACTICE_QUESTIONS.length - 1) {
-        studyQuestionIndex++;
-        displayStudyQuestion();
+function nextReviewQuestion() {
+    if (reviewQuestionIndex < PRACTICE_QUESTIONS.length - 1) {
+        reviewQuestionIndex++;
+        displayReviewQuestion();
     } else {
-        backToMenu();
+        backToReviewList();
     }
 }
 

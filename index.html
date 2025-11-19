@@ -31,9 +31,9 @@
                     <span class="btn-subtitle" tabindex="-1">Answer as many questions as you can before time runs out</span>
                 </button>
                 
-                <button class="btn btn-primary" onclick="startStudyMode()">
-                    📚 Study Mode
-                    <span class="btn-subtitle" tabindex="-1">View all questions with answers</span>
+                <button class="btn btn-primary" onclick="showReviewList()">
+                    📚 Review Mode
+                    <span class="btn-subtitle" tabindex="-1">Browse and review all questions</span>
                 </button>
                 
                 <button class="btn btn-primary" onclick="showStatistics()">
@@ -58,7 +58,7 @@
             <div style="max-width: 600px; margin: 0 auto 30px; padding: 20px; background: rgba(255, 107, 53, 0.1); border-radius: 12px; border-left: 4px solid #ff6b35;">
                 <p style="margin: 0; line-height: 1.6;">
                     <strong>Finding a Question #?</strong><br>
-                    You can find question numbers displayed in orange text above questions in Practice Mode, Study Mode, and Time Challenge. They're also shown on the Statistics page.
+                    You can find question numbers displayed in orange text above questions in Practice Mode, Review Mode, and Time Challenge. They're also shown on the Statistics page.
                 </p>
             </div>
 
@@ -180,23 +180,37 @@
             <button class="btn-back" onclick="quitPractice()">← Back to Menu</button>
         </div>
 
-        <!-- Study Mode Screen -->
-        <div id="study-screen" class="screen hidden">
+        <!-- Review List Screen -->
+        <div id="review-list-screen" class="screen hidden">
             <div class="header">
-                <h2>Study Mode</h2>
-                <p id="study-counter" class="question-counter">Question 1/45</p>
+                <h2>📚 Review Mode</h2>
+                <p class="subtitle">Select a question to review</p>
             </div>
 
-            <div id="study-container" class="question-container">
-                <!-- Study content will be inserted here -->
-            </div>
-
-            <div class="button-group">
-                <button class="btn btn-secondary" onclick="previousStudyQuestion()" id="prev-study">← Previous</button>
-                <button class="btn btn-primary" onclick="nextStudyQuestion()" id="next-study">Next →</button>
+            <div id="review-list-container" class="review-list-container">
+                <!-- Question list will be inserted here -->
             </div>
 
             <button class="btn-back" onclick="backToMenu()">← Back to Menu</button>
+        </div>
+
+        <!-- Review Question Screen -->
+        <div id="review-screen" class="screen hidden">
+            <div class="header">
+                <h2>📚 Review Mode</h2>
+                <p id="review-counter" class="question-counter">Question 1/51</p>
+            </div>
+
+            <div id="review-container" class="question-container">
+                <!-- Review content will be inserted here -->
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-secondary" onclick="previousReviewQuestion()" id="prev-review">← Previous</button>
+                <button class="btn btn-primary" onclick="nextReviewQuestion()" id="next-review">Next →</button>
+            </div>
+
+            <button class="btn-back" onclick="backToReviewList()">← Back to List</button>
         </div>
 
         <!-- Statistics Screen -->
