@@ -4,6 +4,25 @@
     box-sizing: border-box;
 }
 
+/* Prevent cursor/caret from appearing on any element */
+* {
+    caret-color: transparent;
+}
+
+/* Only show caret in actual input fields */
+input, textarea {
+    caret-color: auto;
+}
+
+/* Prevent any element from being editable */
+* {
+    -webkit-user-modify: read-only;
+}
+
+input, textarea {
+    -webkit-user-modify: read-write;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: 
@@ -160,6 +179,15 @@ body.dark-mode .subtitle {
     flex-direction: column;
     align-items: center;
     gap: 5px;
+    outline: none;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btn:active {
+    outline: none;
 }
 
 .btn-primary {
@@ -206,8 +234,23 @@ body.dark-mode .btn-secondary:hover {
     font-weight: 400;
     opacity: 0.9;
     user-select: none;
-    cursor: pointer;
     pointer-events: none;
+    outline: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.btn-subtitle:focus {
+    outline: none;
+}
+
+span {
+    outline: none;
+}
+
+span:focus {
+    outline: none;
 }
 
 .btn-back {
@@ -220,6 +263,15 @@ body.dark-mode .btn-secondary:hover {
     font-size: 1em;
     font-weight: 600;
     transition: all 0.3s ease;
+    outline: none;
+}
+
+.btn-back:focus {
+    outline: none;
+}
+
+.btn-back:active {
+    outline: none;
 }
 
 .btn-back:hover {

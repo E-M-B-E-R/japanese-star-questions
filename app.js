@@ -127,11 +127,35 @@ function showScreen(screenId) {
     });
     document.getElementById(screenId).classList.remove('hidden');
     currentMode = screenId;
+    
+    // Remove focus from any element to prevent cursor blinking
+    setTimeout(() => {
+        if (document.activeElement && document.activeElement !== document.body) {
+            document.activeElement.blur();
+        }
+        // Also focus the body to ensure nothing else has focus
+        document.body.focus();
+        document.body.blur();
+    }, 0);
 }
 
 // Back to main menu
 function backToMenu() {
+    // First blur any active element
+    if (document.activeElement) {
+        document.activeElement.blur();
+    }
+    
     showScreen('main-menu');
+    
+    // Blur again after screen change and remove all focus
+    setTimeout(() => {
+        const allButtons = document.querySelectorAll('button');
+        allButtons.forEach(btn => btn.blur());
+        if (document.activeElement && document.activeElement !== document.body) {
+            document.activeElement.blur();
+        }
+    }, 50);
 }
 
 // Start practice mode
@@ -338,6 +362,12 @@ function showResults() {
 // Quit practice
 function quitPractice() {
     if (confirm('Are you sure you want to quit? Your progress will not be saved.')) {
+        // Blur the button that was clicked
+        setTimeout(() => {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+        }, 0);
         backToMenu();
     }
 }
@@ -694,6 +724,12 @@ function quitTimerMode() {
             clearInterval(timerInterval);
             timerInterval = null;
         }
+        // Blur the button
+        setTimeout(() => {
+            if (document.activeElement) {
+                document.activeElement.blur();
+            }
+        }, 0);
         backToMenu();
     }
 }
@@ -897,4 +933,15 @@ function clearStatistics() {
 // Initialize app
 document.addEventListener('DOMContentLoaded', () => {
     showScreen('main-menu');
+    
+    // Add event listener to blur all buttons after click
+    document.addEventListener('click', (e) => {
+        if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+            setTimeout(() => {
+                if (document.activeElement && document.activeElement.tagName === 'BUTTON') {
+                    document.activeElement.blur();
+                }
+            }, 100);
+        }
+    });
 });
