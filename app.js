@@ -87,12 +87,26 @@ function recordAnswer(question, isCorrect) {
     const stats = loadStats();
     const key = `${question.beforeStar}★${question.afterStar}`;
     
+    // Build the complete answer
+    const correctSequence = question.correctOrder.map(i => question.options[i - 1]);
+    const starPosition = 2;
+    let fullAnswer = question.beforeStar + ' ';
+    correctSequence.forEach((word, idx) => {
+        if (idx === starPosition) {
+            fullAnswer += `★${word}★ `;
+        } else {
+            fullAnswer += `${word} `;
+        }
+    });
+    fullAnswer += question.afterStar;
+    
     if (!stats[key]) {
         stats[key] = {
             correct: 0,
             incorrect: 0,
             total: 0,
-            translation: question.translation
+            translation: question.translation,
+            fullAnswer: fullAnswer
         };
     }
     
@@ -173,8 +187,10 @@ function displayPracticeQuestion() {
     
     container.innerHTML = html;
     
-    // Show/hide buttons
-    document.getElementById('submit-answer').classList.remove('hidden');
+    // Show/hide buttons and re-enable submit button
+    const submitBtn = document.getElementById('submit-answer');
+    submitBtn.classList.remove('hidden');
+    submitBtn.disabled = false;
     document.getElementById('next-question').classList.add('hidden');
 }
 
@@ -210,6 +226,11 @@ function submitAnswer() {
         return;
     }
     
+    // Disable buttons to prevent multiple submissions
+    const submitBtn = document.getElementById('submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
     const question = practiceQuestions[currentQuestionIndex];
     const isCorrect = JSON.stringify(selectedOrder) === JSON.stringify(question.correctOrder);
     
@@ -224,7 +245,7 @@ function submitAnswer() {
     showAnswer(question, isCorrect);
     
     // Hide submit, show next
-    document.getElementById('submit-answer').classList.add('hidden');
+    submitBtn.classList.add('hidden');
     document.getElementById('next-question').classList.remove('hidden');
 }
 
@@ -278,9 +299,14 @@ function nextQuestion() {
 
 // Skip question
 function skipQuestion() {
+    // Disable submit button to prevent multiple skips
+    const submitBtn = document.getElementById('submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
     const question = practiceQuestions[currentQuestionIndex];
     showAnswer(question, false);
-    document.getElementById('submit-answer').classList.add('hidden');
+    submitBtn.classList.add('hidden');
     document.getElementById('next-question').classList.remove('hidden');
 }
 
@@ -443,8 +469,10 @@ function displayTimerQuestion() {
     
     container.innerHTML = html;
     
-    // Show/hide buttons
-    document.getElementById('timer-submit-answer').classList.remove('hidden');
+    // Show/hide buttons and re-enable submit button
+    const submitBtn = document.getElementById('timer-submit-answer');
+    submitBtn.classList.remove('hidden');
+    submitBtn.disabled = false;
     document.getElementById('timer-next-question').classList.add('hidden');
 }
 
@@ -480,6 +508,11 @@ function submitTimerAnswer() {
         return;
     }
     
+    // Disable buttons to prevent multiple submissions
+    const submitBtn = document.getElementById('timer-submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
     const question = timerQuestions[currentQuestionIndex];
     const userAnswer = selectedOrder.map(num => num - 1);
     const isCorrect = arraysEqual(userAnswer, question.correctOrder);
@@ -505,7 +538,7 @@ function submitTimerAnswer() {
     showTimerAnswer(question, isCorrect);
     
     // Update buttons
-    document.getElementById('timer-submit-answer').classList.add('hidden');
+    submitBtn.classList.add('hidden');
     document.getElementById('timer-next-question').classList.remove('hidden');
 }
 
@@ -552,6 +585,11 @@ function nextTimerQuestion() {
 
 // Skip timer question
 function skipTimerQuestion() {
+    // Disable submit button to prevent multiple skips
+    const submitBtn = document.getElementById('timer-submit-answer');
+    if (submitBtn.disabled) return;
+    submitBtn.disabled = true;
+    
     const question = timerQuestions[currentQuestionIndex];
     
     // Record as incorrect
@@ -566,7 +604,7 @@ function skipTimerQuestion() {
     recordAnswer(question, false);
     showTimerAnswer(question, false);
     
-    document.getElementById('timer-submit-answer').classList.add('hidden');
+    submitBtn.classList.add('hidden');
     document.getElementById('timer-next-question').classList.remove('hidden');
 }
 
@@ -828,10 +866,11 @@ function showStatistics() {
         const acc = (data.correct / data.total * 100).toFixed(1);
         const classType = acc < 50 ? 'weak' : acc < 80 ? 'medium' : 'strong';
         const icon = acc < 50 ? '❌' : acc < 80 ? '⚠️' : '✅';
+        const displayText = data.fullAnswer || key; // Use full answer if available, otherwise fall back to key
         
         html += `
             <div class="stat-question ${classType}">
-                <div class="stat-question-text">${icon} ${key.substring(0, 50)}...</div>
+                <div class="stat-question-text">${icon} ${displayText}</div>
                 <div style="color: #666; margin: 5px 0;">${data.translation}</div>
                 <div class="stat-details">
                     <span>Attempts: ${data.total}</span>
@@ -845,6 +884,14 @@ function showStatistics() {
     
     html += '</div>';
     container.innerHTML = html;
+}
+
+// Clear all statistics
+function clearStatistics() {
+    if (confirm('Are you sure you want to clear all statistics? This action cannot be undone.')) {
+        localStorage.removeItem(STATS_KEY);
+        showStatistics(); // Refresh the display
+    }
 }
 
 // Initialize app
