@@ -825,19 +825,17 @@ function showTimerResults() {
 
 // Quit timer mode
 function quitTimerMode() {
-    if (confirm('Are you sure you want to end the challenge?')) {
-        if (timerInterval) {
-            clearInterval(timerInterval);
-            timerInterval = null;
-        }
-        // Blur the button
-        setTimeout(() => {
-            if (document.activeElement) {
-                document.activeElement.blur();
-            }
-        }, 0);
-        backToMenu();
+    if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
     }
+    // Blur the button
+    setTimeout(() => {
+        if (document.activeElement) {
+            document.activeElement.blur();
+        }
+    }, 0);
+    backToMenu();
 }
 
 // Helper function to compare arrays
