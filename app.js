@@ -290,7 +290,7 @@ function showAnswer(question, isCorrect) {
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
     
     let answerHtml = `<div class="answer-section ${isCorrect ? 'correct' : 'incorrect'}">`;
-    answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
+    answerHtml += `<div class="answer-header">${isCorrect ? '◯ CORRECT!' : '✕ Not quite right'}</div>`;
     
     if (question.isDialogue) {
         answerHtml += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
@@ -609,7 +609,7 @@ function showTimerAnswer(question, isCorrect) {
     const correctSequence = question.correctOrder.map(idx => question.optionsFurigana[idx - 1]);
     
     let answerHtml = '<div class="answer-section ' + (isCorrect ? 'correct' : 'incorrect') + '">';
-    answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
+    answerHtml += `<div class="answer-header">${isCorrect ? '◯ CORRECT!' : '✕ Not quite right'}</div>`;
     
     if (question.isDialogue) {
         answerHtml += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
@@ -867,7 +867,7 @@ function displayReviewQuestion() {
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
     
     html += '<div class="answer-section correct">';
-    html += '<div class="answer-header">✅ Correct Answer</div>';
+    html += '<div class="answer-header">◯ Correct Answer</div>';
     
     if (question.isDialogue) {
         html += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
@@ -957,11 +957,11 @@ function showStatistics() {
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${totalCorrect}</span>
-                    <span class="stat-label">Correct ✅</span>
+                    <span class="stat-label">Correct ◯</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${totalIncorrect}</span>
-                    <span class="stat-label">Incorrect ❌</span>
+                    <span class="stat-label">Incorrect ✕</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value">${accuracy}%</span>
@@ -983,7 +983,7 @@ function showStatistics() {
     sortedStats.slice(0, 10).forEach(([key, data]) => {
         const acc = (data.correct / data.total * 100).toFixed(1);
         const classType = acc < 50 ? 'weak' : acc < 80 ? 'medium' : 'strong';
-        const icon = acc < 50 ? '❌' : acc < 80 ? '⚠️' : '✅';
+        const icon = acc < 50 ? '✕' : acc < 80 ? '⚠️' : '◯';
         const displayText = data.fullAnswer || key; // Use full answer if available, otherwise fall back to key
         const questionNum = data.questionNumber ? `<span style="color: #ff6b35; font-weight: bold;">Question #${data.questionNumber}:</span> ` : '';
         
@@ -1137,7 +1137,7 @@ function showDebugAnswer(question, isCorrect) {
     const correctSequence = question.correctOrder.map(i => question.optionsFurigana[i - 1]);
     
     let answerHtml = `<div class="answer-section ${isCorrect ? 'correct' : 'incorrect'}">`;
-    answerHtml += `<div class="answer-header">${isCorrect ? '✅ CORRECT!' : '❌ Not quite right'}</div>`;
+    answerHtml += `<div class="answer-header">${isCorrect ? '◯ CORRECT!' : '✕ Not quite right'}</div>`;
     
     if (question.isDialogue) {
         answerHtml += `<div class="speaker-line">A: ${parseRuby(question.speakerAFurigana)}</div>`;
