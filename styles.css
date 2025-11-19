@@ -1107,6 +1107,7 @@ body.dark-mode .incorrect-item .translation {
     background: transparent !important;
     width: auto;
     height: auto;
+    animation: confetti-fall-swing linear forwards;
 }
 
 @keyframes confetti-fall {
@@ -1116,6 +1117,26 @@ body.dark-mode .incorrect-item .translation {
     }
     100% {
         transform: translateY(100vh) rotate(720deg);
+        opacity: 0.5;
+    }
+}
+
+@keyframes confetti-fall-swing {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 1;
+    }
+    25% {
+        transform: translateY(25vh) translateX(30px) rotate(180deg);
+    }
+    50% {
+        transform: translateY(50vh) translateX(-30px) rotate(360deg);
+    }
+    75% {
+        transform: translateY(75vh) translateX(30px) rotate(540deg);
+    }
+    100% {
+        transform: translateY(100vh) translateX(0) rotate(720deg);
         opacity: 0.5;
     }
 }
