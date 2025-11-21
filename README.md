@@ -136,3 +136,5 @@ This is a learning project. Feel free to fork and modify for your own use!
 ---
 
 Happy studying! 頑張ってください！🇯🇵🍂
+
+<!-- Redeploy trigger: updated README to refresh Netlify edge cache -->
