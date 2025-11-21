@@ -1,4 +1,4 @@
-/# Netlify headers to enforce cache-control for index and immutable assets
+# Netlify headers to enforce cache-control for index and immutable assets
 /index.html
   Cache-Control: public, max-age=0, must-revalidate
 
