@@ -4,9 +4,9 @@ A web-based Japanese language learning application for practicing JLPT N5 gramma
 
 ## 🎯 Features
 
-- **Practice Mode**: Interactive quiz with customizable question count (1-51 questions)
+- **Practice Mode**: Interactive quiz with customizable question count (1-48 questions)
 - **Time Challenge**: Race against the clock with custom time limits and live stats
-- **Review Mode**: Browse all 51 questions with answers and explanations
+- **Review Mode**: Browse all 48 questions with answers and explanations
 - **Statistics Tracking**: Track your progress with detailed accuracy metrics per question
 - **Targeted Practice**: Select specific questions from statistics to practice weak areas
 - **Debug Mode**: Test individual questions by number for focused practice
@@ -56,7 +56,7 @@ Then open your browser to `http://localhost:8000` (or the port shown in your ter
 ├── index.html           # Main HTML structure
 ├── styles.css           # Styling (fall theme with light/dark mode)
 ├── app.js               # Application logic
-├── questions.js         # 51 JLPT N5 practice questions
+├── questions.js         # 48 JLPT N5 practice questions
 ├── scripts/
 │   └── hash-assets.js   # Build script for cache-busting
 ├── package.json         # NPM scripts for deployment
@@ -68,7 +68,7 @@ Then open your browser to `http://localhost:8000` (or the port shown in your ter
 
 ### Practice Mode
 1. Click "Practice Mode" from the main menu
-2. Choose how many questions you want to practice (1-51, default 15)
+2. Choose how many questions you want to practice (1-48, default 15)
 3. Select word options in the correct order to fill in the blanks
 4. Submit your answer to see if you're correct
 5. Review detailed feedback showing:
@@ -86,7 +86,7 @@ Then open your browser to `http://localhost:8000` (or the port shown in your ter
 6. Review all incorrect answers with detailed explanations
 
 ### Review Mode
-1. Click "Review Mode" to see a list of all 51 questions
+1. Click "Review Mode" to see a list of all 48 questions
 2. Click any question to view it with the complete answer
 3. Each question shows:
    - Correct word order with blanks filled
@@ -107,7 +107,7 @@ Then open your browser to `http://localhost:8000` (or the port shown in your ter
 
 ### Debug Mode
 1. Click "Debug Mode" from the main menu
-2. Enter a specific question number (1-51)
+2. Enter a specific question number (1-48)
 3. Practice that single question repeatedly
 4. Perfect for focusing on particularly challenging grammar points
 
