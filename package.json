@@ -1,0 +1,9 @@
+{
+  "name": "japanese-star-questions",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "hash-assets": "node scripts/hash-assets.js",
+    "predeploy": "npm run hash-assets"
+  }
+}
