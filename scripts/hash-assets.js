@@ -10,19 +10,38 @@ function shortHash(filePath) {
   return crypto.createHash('sha1').update(content).digest('hex').slice(0, 8);
 }
 
+function fingerprintAssets(hashes) {
+  // Create fingerprinted copies like app.<hash>.js next to originals
+  ASSETS.forEach(file => {
+    const h = hashes[file];
+    if (!h) return;
+    const dir = path.dirname(file);
+    const ext = path.extname(file);
+    const base = path.basename(file, ext);
+    const newName = `${base}.${h}${ext}`;
+    const src = path.join(__dirname, '..', file);
+    const dest = path.join(__dirname, '..', dir, newName);
+    try {
+      fs.copyFileSync(src, dest);
+      console.log(`Wrote fingerprinted asset: ${dest}`);
+      hashes[file] = newName; // replace value with filename for index replacement
+    } catch (err) {
+      console.error('Error writing fingerprint for', file, err.message);
+    }
+  });
+}
+
 function updateIndex(hashes) {
   let index = fs.readFileSync(INDEX, 'utf8');
 
   ASSETS.forEach(file => {
-    const h = hashes[file] || '';
-    const re = new RegExp(file.replace(/\./g, '\\.') + "(\\?v=)[0-9a-fA-F]*", 'g');
-    if (index.match(re)) {
-      index = index.replace(re, `${file}?v=${h}`);
-    } else {
-      // also handle plain references without ?v=
-      const re2 = new RegExp(file.replace(/\./g, '\\.'), 'g');
-      index = index.replace(re2, `${file}?v=${h}`);
-    }
+    const replacement = hashes[file];
+    if (!replacement) return;
+
+    // Replace occurrences of the filename, with or without existing ?v= or query strings
+    const escaped = file.replace(/\./g, '\\\\.');
+    const re = new RegExp(`${escaped}(?:\\?[^"'\\s>]*)?`, 'g');
+    index = index.replace(re, replacement);
   });
 
   fs.writeFileSync(INDEX, index, 'utf8');
@@ -40,8 +59,9 @@ function main() {
     }
   });
 
+  fingerprintAssets(hashes);
   updateIndex(hashes);
-  console.log('Updated', INDEX, 'with hashes:', hashes);
+  console.log('Fingerprinting complete. Updated', INDEX);
 }
 
 main();
