@@ -1,6 +1,7 @@
-# JLPT N5 Grammar Practice - Star Questions
+# JLPT N5 Star Question Practice
 
-A web-based Japanese language learning application for practicing JLPT N5 grammar with interactive exercises.
+An interactive web application for practicing JLPT N5 grammar through star questions (placing words in correct order).
+
 
 ## 🎯 Features
 
