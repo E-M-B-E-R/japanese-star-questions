@@ -65,6 +65,8 @@ ruby ruby {
 .container {
     max-width: 900px;
     margin: 0 auto;
+    /* Add padding to prevent theme toggle button from overlapping content */
+    padding-top: 60px;
 }
 
 .screen {
@@ -83,7 +85,7 @@ body.dark-mode .screen {
 
 /* Theme Toggle Button */
 .theme-toggle {
-    position: fixed;
+    position: absolute;
     top: 20px;
     right: 20px;
     background: linear-gradient(135deg, #ff6b35 0%, #d32f2f 100%);
