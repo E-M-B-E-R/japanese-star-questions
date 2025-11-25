@@ -65,6 +65,8 @@ ruby ruby {
 .container {
     max-width: 900px;
     margin: 0 auto;
+    /* Add padding to prevent theme toggle button from overlapping content */
+    padding-top: 60px;
 }
 
 .screen {
