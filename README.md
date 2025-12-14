@@ -1,3 +1,4 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/b3f92042-c20e-4b5d-89ee-20499bbb23ed/deploy-status)](https://app.netlify.com/projects/japanese-star-questions/deploys)
 # JLPT N5 Star Question Practice
 
 An interactive web application for practicing JLPT N5 grammar through star questions (placing words in correct order).
